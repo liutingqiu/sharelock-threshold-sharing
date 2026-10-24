@@ -9,4 +9,6 @@ Links:
 - https://liutingqiu.github.io/sharelock-threshold-sharing/
 - https://github.com/liutingqiu/sharelock-threshold-sharing/blob/main/docs/report.pdf
 
+Video: https://youtu.be/0ySelU3zqck (unlisted)
+
 Tags: cryptography, secret-sharing, verifiable-secret-sharing, merkle-tree, information-theory, python

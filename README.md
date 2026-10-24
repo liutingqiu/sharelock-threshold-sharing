@@ -11,7 +11,8 @@ Threshold secret sharing over GF(2^8) where a corrupted share is **named**, not 
 | Tests | 14, no third-party dependencies |
 
 Run record: https://liutingqiu.github.io/sharelock-threshold-sharing/  
-Paper: [docs/report.pdf](docs/report.pdf) · LaTeX source [docs/report.tex](docs/report.tex)
+Paper: [docs/report.pdf](docs/report.pdf) · LaTeX source [docs/report.tex](docs/report.tex)  
+Video: https://youtu.be/0ySelU3zqck
 
 ## Why it exists
 
