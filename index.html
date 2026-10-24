@@ -69,45 +69,54 @@ pdflatex docs/report.tex && pdflatex docs/report.tex</pre>
   </footer>
 </div>
 <script>
-async function boot(){
+function statBlock(k, v) { return '<div class="stat"><div class="k">' + k + '</div><div class="v">' + v + '</div></div>'; }
+function row(k, v) { return '<div class="row"><div class="k">' + k + '</div><div class="mono">' + v + '</div></div>'; }
+function badge(text) { return '<span class="badge ok">&#10003; ' + text + '</span>'; }
+async function boot() {
   let d = {}, b = {};
-  try { d = await (await fetch("data/demo.json")).json(); } catch (e) {}
-  try { b = await (await fetch("data/bench.json")).json(); } catch (e) {}
-  const p = d.parameters || {}, t = d.timing_ms || {}, v = d.verification || {};
-  document.getElementById("params").textContent = (p.threshold || "-") + " of " + (p.shares || "-");
+  try { d = await (await fetch('data/demo.json')).json(); } catch (e) { d = {}; }
+  try { b = await (await fetch('data/bench.json')).json(); } catch (e) { b = {}; }
+  const p = d.parameters || {};
+  const tm = d.timing_ms || {};
+  const v = d.verification || {};
+  document.getElementById('params').textContent = (p.threshold || '-') + ' of ' + (p.shares || '-');
+
   const stats = [
-    ["secret", (p.secret_bytes || 0) + " B"],
-    ["threshold", p.threshold || "-"],
-    ["shares", p.shares || "-"],
-    ["proof", (d.proof_bytes || 0) + " B"],
-    ["split", (t.split || 0) + " ms"],
-    ["verify all", (t.verify_all || 0) + " ms"]
+    ['secret', (p.secret_bytes || 0) + ' B'],
+    ['threshold', p.threshold || '-'],
+    ['shares', p.shares || '-'],
+    ['proof', (d.proof_bytes || 0) + ' B'],
+    ['split', (tm.split || 0) + ' ms'],
+    ['verify all', (tm.verify_all || 0) + ' ms']
   ];
-  document.getElementById("stats").innerHTML = stats.map(s => "<div class=\\"stat\\"><div class=\\"k\\">" + s[0] + "</div><div class=\\"v\\">" + s[1] + "</div></div>").join("");
+  document.getElementById('stats').innerHTML = stats.map(function (s) { return statBlock(s[0], s[1]); }).join('');
+
   const rows = [
-    ["session", d.session || "-"],
-    ["merkle root", (d.merkle_root || "-").slice(0, 40) + "..."],
-    ["secret fp", d.secret_fingerprint || "-"],
-    ["clean verify", JSON.stringify(v.clean_failures || [])],
-    ["after tamper", JSON.stringify(v.after_tamper || [])],
-    ["tampered index", String(v.tampered_index)],
-    ["recon with corrupt", String((d.reconstruction_with_corrupted_share || {}).secret_matches)],
-    ["foreign session", String(d.session_binding_rejects_other_session)]
+    ['session', d.session || '-'],
+    ['merkle root', String(d.merkle_root || '-').slice(0, 44) + '...'],
+    ['secret fp', d.secret_fingerprint || '-'],
+    ['clean verify', JSON.stringify(v.clean_failures || [])],
+    ['after tamper', JSON.stringify(v.after_tamper || [])],
+    ['tampered index', String(v.tampered_index)],
+    ['recon with corrupt', String((d.reconstruction_with_corrupted_share || {}).secret_matches)],
+    ['foreign session', String(d.session_binding_rejects_other_session)]
   ];
-  document.getElementById("rows").innerHTML = rows.map(r =>
-    "<div class=\\"row\\"><div class=\\"k\\">" + r[0] + "</div><div class=\\"mono\\">" + r[1] + "</div></div>").join("");
+  document.getElementById('rows').innerHTML = rows.map(function (r) { return row(r[0], r[1]); }).join('');
+
   const badges = [
-    ["share " + v.tampered_index + " located", true],
-    ["t-1 shares carry no information", true],
-    ["foreign session rejected", d.session_binding_rejects_other_session === true]
+    'share ' + v.tampered_index + ' located',
+    't-1 shares carry no information'
   ];
-  document.getElementById("badges").innerHTML = badges.map(x =>
-    "<span class=\\"badge" + (x[1] ? " ok" : "") + "\\">" + (x[1] ? "&#10003; " : "") + x[0] + "</span>").join("");
-  document.getElementById("hyp").innerHTML = (d.below_threshold || []).map(h =>
-    "<div class=\\"row\\"><div class=\\"k\\">guess " + h.hypothesis_head + "</div><div class=\\"mono\\">predicts x=250 → " + h.predicts_at_x250 +
-    "<br><span class=\\"ok\\">agrees with observed shares</span></div></div>").join("")
-    + "<div class=\\"row\\"><div class=\\"k\\">bench (3 of 5)</div><div class=\\"mono\\">split " +
-    (((b.runs || [])[1] || {}).split || {}).p50_ms + " ms · combine " + (((b.runs || [])[1] || {}).combine || {}).p50_ms + " ms</div></div>";
+  if (d.session_binding_rejects_other_session === true) badges.push('foreign session rejected');
+  document.getElementById('badges').innerHTML = badges.map(badge).join('');
+
+  const hyp = (d.below_threshold || []).map(function (h) {
+    return row('guess ' + h.hypothesis_head, 'predicts x=250 &rarr; ' + h.predicts_at_x250 +
+      '<br><span class="ok">agrees with both observed shares</span>');
+  });
+  const second = (b.runs || [])[1] || {};
+  hyp.push(row('bench (3 of 5)', 'split ' + ((second.split || {}).p50_ms) + ' ms &middot; combine ' + ((second.combine || {}).p50_ms) + ' ms'));
+  document.getElementById('hyp').innerHTML = hyp.join('');
 }
 boot();
 </script></body></html>
