@@ -1,0 +1,46 @@
+{
+  "parameters": {
+    "threshold": 3,
+    "shares": 5,
+    "secret_bytes": 32
+  },
+  "secret_fingerprint": "0ea8b771f5068dad",
+  "session": "0390588e1bed37f74728f7ab5a0b0d4b",
+  "merkle_root": "cd0d509a15f2ff1020a6d4e0b732dcd2c69f0cfa562a74bf9e171a4799a83dfb",
+  "proof_bytes": 96,
+  "timing_ms": {
+    "split": 0.06,
+    "commit": 0.076,
+    "verify_all": 0.023,
+    "locate_after_tamper": 0.018
+  },
+  "verification": {
+    "clean_failures": [],
+    "after_tamper": [
+      2
+    ],
+    "tampered_index": 2
+  },
+  "reconstruction_with_corrupted_share": {
+    "secret_matches": false,
+    "bytes": "0fa8b771f5068dad"
+  },
+  "below_threshold": [
+    {
+      "hypothesis_head": "00000000",
+      "predicts_at_x250": "e916f9947b40d2fe",
+      "consistent_with_observed": true
+    },
+    {
+      "hypothesis_head": "5a5a5a5a",
+      "predicts_at_x250": "966986eb043fad81",
+      "consistent_with_observed": true
+    },
+    {
+      "hypothesis_head": "ffffffff",
+      "predicts_at_x250": "47b8573ad5ee7c50",
+      "consistent_with_observed": true
+    }
+  ],
+  "session_binding_rejects_other_session": true
+}

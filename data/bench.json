@@ -1,0 +1,117 @@
+{
+  "secret_bytes": 32,
+  "runs": [
+    {
+      "threshold": 2,
+      "shares": 3,
+      "total_share_bytes": 99,
+      "expansion_vs_secret": 3.094,
+      "split": {
+        "p50_ms": 0.012,
+        "max_ms": 0.017
+      },
+      "combine": {
+        "p50_ms": 0.008,
+        "max_ms": 0.018
+      },
+      "commit": {
+        "p50_ms": 0.009,
+        "max_ms": 0.017
+      },
+      "verify_one": {
+        "p50_ms": 0.003,
+        "max_ms": 0.006
+      },
+      "locate_all": {
+        "p50_ms": 0.009,
+        "max_ms": 0.012
+      },
+      "proof_bytes": 64,
+      "root_hex": "659ea5f3939597f0"
+    },
+    {
+      "threshold": 3,
+      "shares": 5,
+      "total_share_bytes": 165,
+      "expansion_vs_secret": 5.156,
+      "split": {
+        "p50_ms": 0.037,
+        "max_ms": 0.064
+      },
+      "combine": {
+        "p50_ms": 0.013,
+        "max_ms": 0.034
+      },
+      "commit": {
+        "p50_ms": 0.017,
+        "max_ms": 0.042
+      },
+      "verify_one": {
+        "p50_ms": 0.004,
+        "max_ms": 0.006
+      },
+      "locate_all": {
+        "p50_ms": 0.021,
+        "max_ms": 0.024
+      },
+      "proof_bytes": 96,
+      "root_hex": "2e196091aacb19ee"
+    },
+    {
+      "threshold": 5,
+      "shares": 5,
+      "total_share_bytes": 165,
+      "expansion_vs_secret": 5.156,
+      "split": {
+        "p50_ms": 0.068,
+        "max_ms": 0.124
+      },
+      "combine": {
+        "p50_ms": 0.022,
+        "max_ms": 0.031
+      },
+      "commit": {
+        "p50_ms": 0.015,
+        "max_ms": 0.036
+      },
+      "verify_one": {
+        "p50_ms": 0.003,
+        "max_ms": 0.005
+      },
+      "locate_all": {
+        "p50_ms": 0.019,
+        "max_ms": 0.03
+      },
+      "proof_bytes": 96,
+      "root_hex": "fda25e2df3cb19f1"
+    },
+    {
+      "threshold": 4,
+      "shares": 10,
+      "total_share_bytes": 330,
+      "expansion_vs_secret": 10.312,
+      "split": {
+        "p50_ms": 0.105,
+        "max_ms": 0.137
+      },
+      "combine": {
+        "p50_ms": 0.017,
+        "max_ms": 0.025
+      },
+      "commit": {
+        "p50_ms": 0.028,
+        "max_ms": 0.083
+      },
+      "verify_one": {
+        "p50_ms": 0.004,
+        "max_ms": 0.008
+      },
+      "locate_all": {
+        "p50_ms": 0.045,
+        "max_ms": 0.181
+      },
+      "proof_bytes": 128,
+      "root_hex": "ba1a5b49ff77ed88"
+    }
+  ]
+}

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ShareLock - recorded ritual</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Spectral:wght@600;700&display=swap" rel="stylesheet" />
+<style>
+:root{--bg:#080b10;--panel:#0e141c;--line:#1d2734;--ink:#e8eef7;--muted:#8b9cb3;--accent:#e0b464;--ok:#43d9a3;--bad:#ff5d73}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:radial-gradient(900px 480px at 15% -10%,#16202e 0%,var(--bg) 60%);color:var(--ink);font-family:"IBM Plex Mono",monospace;line-height:1.6}
+.wrap{max-width:1080px;margin:0 auto;padding:36px 22px 72px}
+header{border-bottom:1px solid var(--line);padding-bottom:18px}
+h1{font-family:Spectral,Georgia,serif;font-size:clamp(24px,3.6vw,40px);letter-spacing:-.01em;line-height:1.15}
+h1 em{color:var(--accent);font-style:normal}
+.eyebrow{color:var(--muted);font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:9px}
+.sub{color:var(--muted);font-size:12.5px;margin-top:10px;max-width:660px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-top:22px}
+.stat{background:#0b1119;padding:12px 14px}
+.stat .k{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.stat .v{font-family:Spectral,serif;font-size:18px;margin-top:3px;word-break:break-all}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:20px}
+@media(max-width:900px){.cols{grid-template-columns:1fr}}
+.panel{background:linear-gradient(180deg,rgba(16,23,33,.96),rgba(9,13,19,.97));border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.panel h2{font-family:Spectral,serif;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:12px 15px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between}
+.row{display:grid;grid-template-columns:150px 1fr;gap:12px;padding:9px 15px;border-bottom:1px solid rgba(29,39,52,.8);font-size:11.5px;align-items:baseline}
+.row .k{color:var(--muted);font-size:10.5px;letter-spacing:.06em}
+.mono{word-break:break-all}
+.ok{color:var(--ok)}.bad{color:var(--bad)}
+.badges{display:flex;gap:8px;flex-wrap:wrap;padding:12px 15px}
+.badge{font-size:10px;letter-spacing:.08em;border:1px solid var(--line);border-radius:999px;padding:3px 9px;color:var(--muted)}
+.badge.ok{border-color:rgba(67,217,163,.45)}
+pre{font-size:11px;padding:15px;color:#b6c6d8;overflow:auto;line-height:1.75}
+.note{padding:12px 15px;font-size:11px;color:var(--muted);border-top:1px solid var(--line)}.note b{color:var(--ink)}
+footer{margin-top:26px;border-top:1px solid var(--line);padding-top:14px;font-size:11px;color:var(--muted);display:flex;gap:16px;flex-wrap:wrap}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+</style></head><body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Mathematics for Systems Security &middot; cryptographer track</div>
+    <h1>Share <em>Lock</em></h1>
+    <p class="sub">Threshold secret sharing over GF(2^8) with per-share commitments. A corrupted share is not just detected: it is named. This page renders one recorded ritual, not a simulation.</p>
+  </header>
+  <div class="stats" id="stats"></div>
+  <div class="cols">
+    <div class="panel">
+      <h2><span>Ritual</span><span id="params">-</span></h2>
+      <div id="rows"></div>
+      <div class="badges" id="badges"></div>
+      <div class="note">Tampering with share 2 changes one bit. Verification fails for exactly that index, and reconstruction over a quorum containing it returns a different secret - which is why the commitment exists.</div>
+    </div>
+    <div class="panel">
+      <h2>Below threshold, nothing is learned</h2>
+      <div id="hyp"></div>
+      <div class="note">Three different hypothesised secrets, each extended with the same two observed shares, produce polynomials that agree with both observations and disagree about every further coordinate. A holder of two shares cannot choose between them.</div>
+    </div>
+  </div>
+  <div class="panel" style="margin-top:18px">
+    <h2>Reproduce</h2>
+    <pre>python -m pytest -q                    # 14 tests
+python -m sharelock.demo runs/demo.json   # records this page
+python -m bench.bench                  # timings in the report
+
+# typeset the paper
+pdflatex docs/report.tex && pdflatex docs/report.tex</pre>
+    <div class="note">The report is committed in LaTeX (<b>docs/report.tex</b>) with a prebuilt PDF (<b>docs/report.pdf</b>) for reviewers without a TeX installation. Security claims are stated as theorems with proofs, not as benchmarks.</div>
+  </div>
+  <footer>
+    <a href="https://github.com/liutingqiu/sharelock-threshold-sharing">repository</a>
+    <a href="docs/report.pdf">paper (pdf)</a>
+    <a href="docs/report.tex">paper (latex)</a>
+  </footer>
+</div>
+<script>
+async function boot(){
+  let d = {}, b = {};
+  try { d = await (await fetch("data/demo.json")).json(); } catch (e) {}
+  try { b = await (await fetch("data/bench.json")).json(); } catch (e) {}
+  const p = d.parameters || {}, t = d.timing_ms || {}, v = d.verification || {};
+  document.getElementById("params").textContent = (p.threshold || "-") + " of " + (p.shares || "-");
+  const stats = [
+    ["secret", (p.secret_bytes || 0) + " B"],
+    ["threshold", p.threshold || "-"],
+    ["shares", p.shares || "-"],
+    ["proof", (d.proof_bytes || 0) + " B"],
+    ["split", (t.split || 0) + " ms"],
+    ["verify all", (t.verify_all || 0) + " ms"]
+  ];
+  document.getElementById("stats").innerHTML = stats.map(s => "<div class=\\"stat\\"><div class=\\"k\\">" + s[0] + "</div><div class=\\"v\\">" + s[1] + "</div></div>").join("");
+  const rows = [
+    ["session", d.session || "-"],
+    ["merkle root", (d.merkle_root || "-").slice(0, 40) + "..."],
+    ["secret fp", d.secret_fingerprint || "-"],
+    ["clean verify", JSON.stringify(v.clean_failures || [])],
+    ["after tamper", JSON.stringify(v.after_tamper || [])],
+    ["tampered index", String(v.tampered_index)],
+    ["recon with corrupt", String((d.reconstruction_with_corrupted_share || {}).secret_matches)],
+    ["foreign session", String(d.session_binding_rejects_other_session)]
+  ];
+  document.getElementById("rows").innerHTML = rows.map(r =>
+    "<div class=\\"row\\"><div class=\\"k\\">" + r[0] + "</div><div class=\\"mono\\">" + r[1] + "</div></div>").join("");
+  const badges = [
+    ["share " + v.tampered_index + " located", true],
+    ["t-1 shares carry no information", true],
+    ["foreign session rejected", d.session_binding_rejects_other_session === true]
+  ];
+  document.getElementById("badges").innerHTML = badges.map(x =>
+    "<span class=\\"badge" + (x[1] ? " ok" : "") + "\\">" + (x[1] ? "&#10003; " : "") + x[0] + "</span>").join("");
+  document.getElementById("hyp").innerHTML = (d.below_threshold || []).map(h =>
+    "<div class=\\"row\\"><div class=\\"k\\">guess " + h.hypothesis_head + "</div><div class=\\"mono\\">predicts x=250 → " + h.predicts_at_x250 +
+    "<br><span class=\\"ok\\">agrees with observed shares</span></div></div>").join("")
+    + "<div class=\\"row\\"><div class=\\"k\\">bench (3 of 5)</div><div class=\\"mono\\">split " +
+    (((b.runs || [])[1] || {}).split || {}).p50_ms + " ms · combine " + (((b.runs || [])[1] || {}).combine || {}).p50_ms + " ms</div></div>";
+}
+boot();
+</script></body></html>
